@@ -1,21 +1,85 @@
 import re
 import pandas as pd
+from binance.client import Client
 from datetime import date, datetime, timedelta
 
 
-def mm_yy_date_slicer(date_str):
+
+def mmyy_make_iterable_from_to(mmyy_from, mmyy_to=None):
+    """
+    Create a collection of mmyy formatted dates lying between a from and to date value
+    :param mmyy_from: from value (mmyy)
+    :param mmyy_to: to value (mmyy)
+    :return: Collection of dates
+    """
+    if not(mmyy_valid_date(mmyy_from)):
+        return []
+
+    if mmyy_to and not(mmyy_valid_date(mmyy_to)):
+        return []
+
+    if mmyy_to and not(mmyy_to_older_then_from(mmyy_from, mmyy_to)):
+        return []
+
+    dt_from = datetime.strptime(mmyy_from, "%m%y")
+    if not(mmyy_to):
+        dt_to = datetime.today()
+        dt_to = dt_to + pd.offsets.MonthBegin(-1)
+    else:
+        dt_to = datetime.strptime(mmyy_to, "%m%y")
+
+    dt_check = dt_from
+    mmyy_coll = [dt_check.strftime('%m%y')]
+    while dt_check < dt_to:
+        dt_check = dt_check + pd.DateOffset(months=1)
+        mmyy_coll.append(dt_check.strftime('%m%y'))
+
+    return mmyy_coll
+
+
+def mmyy_valid_date(date_str):
+    """
+    Check if a date string is a valid date. Expected format is mmyy.
+    :param date_str: a date string
+    :return: date_str or None
+    """
+    check = re.match("^(0[1-9]|1[0-2])\/?([0-9]{2})$", date_str)
+    if check:
+        return date_str
+    else:
+        return None
+
+
+def mmyy_to_older_then_from(mmyy_from, mmyy_to):
+    """
+    Check if a to-date string value is older than a from-date string. Expected format is mmyy.
+    :param mmyy_from: from date string
+    :param mmyy_to: to date string
+    :return: True or False
+    """
+    if not(mmyy_valid_date(mmyy_from)) or not(mmyy_valid_date(mmyy_to)):
+        return False
+
+    yymm_from = int(f"{mmyy_from[2:]}{mmyy_from[0:2]}")
+    yymm_to = int(f"{mmyy_to[2:]}{mmyy_to[0:2]}")
+
+    if yymm_to > yymm_from:
+        return True
+    else:
+        return False
+
+
+def mmyy_date_slicer(date_str):
     """Return start and end point for given date in mm-yy format
        :param date_str: date in mmyy format, i.e. "1222" or "0108".
+       :return:
     """
-    # Check if date is well-formed
-    today = date.today()
-    check = re.match("^(0[1-9]|1[0-2])\/?([0-9]{2})$", date_str)
-
     # Initialize output
     start = ""
     end = ""
 
-    if check:
+    if mmyy_valid_date(date_str):
+        today = date.today()
         # Check if date is in the future
         dt_check = datetime.strptime(date_str, "%m%y")
         if dt_check.date() <= today:
@@ -47,14 +111,20 @@ def mm_yy_date_slicer(date_str):
     return start, end
 
 
-def create_filename(ticker, interval, mmyy, ):
-
-
-    return 1
+def create_filename(ticker, interval, mmyy):
+    """
+    Create a filename based on a set of given parameter values.
+    :param ticker: the ticker symbol
+    :param interval: the time interval of the data
+    :param mmyy: the date (in mmyy format) for which data is being fetched
+    :return: filename string
+    """
+    return f"{ticker}_{interval}_{mmyy[2:]}{mmyy[0:2]}.DAT"
 
 
 def ohlcvn_response_to_csv(response, fqfilename):
-    """
+    """ Create a csv file from a given response. The output columns are:
+    timestamp,open,high,low,close,volume,nr of trades
     :param response: A collection representing candlesticks with some additional info.
         Example:
         [
@@ -77,24 +147,27 @@ def ohlcvn_response_to_csv(response, fqfilename):
     :param fqfilename: The fully qualified filepath and filename of the file in which data needs to be written
     :return: Status message of the operation
     """
-    # Write collection to csv
 
     df = pd.DataFrame(data=response,
                       columns=['ts', 'o', 'h', 'l', 'c', 'v', 'ct', 'qav', 'nt', 'tbb', 'tbq', 'ign'])
     df = df.drop(['ct', 'qav', 'tbb', 'tbq', 'ign'], axis=1)
     df.to_csv(fqfilename, encoding='utf-8', index=False, header=False)
 
-    return 1
+    return 0
 
 
 if __name__ == '__main__':
     # print(mm_yy_date_slicer("1218"))
 
-    response = [[1640995200000, '0.01106700', '0.01107700', '0.01106200', '0.01107600', '49.83000000', 1640995259999, '0.55154822', 59, '16.86600000', '0.18675310', '0'],
-                [1640995260000, '0.01107600', '0.01107800', '0.01107000', '0.01107700', '61.18200000', 1640995319999, '0.67752268', 80, '31.72800000', '0.35134498', '0'],
-                [1640995320000, '0.01107800', '0.01107800', '0.01107100', '0.01107300', '59.16000000', 1640995379999, '0.65513704', 47, '20.22300000', '0.22394926', '0']]
-    fqfilename = '/home/user/Data/bla.txt'
-    ohlcvn_response_to_csv(response, fqfilename)
+    print(Client.KLINE_INTERVAL_1MINUTE)
+
+    # print(mmyy_make_iterable_from_to("0817"))
+
+    # response = [[1640995200000, '0.01106700', '0.01107700', '0.01106200', '0.01107600', '49.83000000', 1640995259999, '0.55154822', 59, '16.86600000', '0.18675310', '0'],
+    #             [1640995260000, '0.01107600', '0.01107800', '0.01107000', '0.01107700', '61.18200000', 1640995319999, '0.67752268', 80, '31.72800000', '0.35134498', '0'],
+    #             [1640995320000, '0.01107800', '0.01107800', '0.01107100', '0.01107300', '59.16000000', 1640995379999, '0.65513704', 47, '20.22300000', '0.22394926', '0']]
+    # fqfilename = '/home/user/Data/bla.txt'
+    # ohlcvn_response_to_csv(response, fqfilename)
 
 # if __name__ == '__main__':
 #     dt = datetime(2016, 1, 31)
