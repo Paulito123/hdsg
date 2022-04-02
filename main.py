@@ -5,7 +5,7 @@ from binance.client import Client
 
 
 def load_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None):
-    """
+    """ 
     Load a defined part of historic data for a given start date and a given list of tickers.
     If a to date is specified, data is loaded for all months between the given dates.
     Data is exported to files, one file for one month of data.
