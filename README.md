@@ -24,7 +24,7 @@ exchanges, currently only Binance.
 > [Create Binance account](https://accounts.binance.me/en/register?ref=11263187)
 
 
-## Usage
+## How to start
 
 If you are using Linux and you like your keys to
 be defined as environment variables, add your key

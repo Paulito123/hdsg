@@ -94,3 +94,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+# TODO: Use a config file instead of constant.py
+# TODO: make a testcase for all functions in helper file
+# TODO: use a class instead of plain script

@@ -1,7 +1,7 @@
 import helper as h
 import pytest
 from datetime import date, datetime, timedelta
-# TODO: make a testcase for all functions in helper file
+
 
 today = date.today()
 mm = f"{today.month}".zfill(2)
