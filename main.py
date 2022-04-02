@@ -5,7 +5,7 @@ from binance.client import Client
 
 
 def load_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None):
-    """ 
+    """
     Load a defined part of historic data for a given start date and a given list of tickers.
     If a to date is specified, data is loaded for all months between the given dates.
     Data is exported to files, one file for one month of data.
@@ -72,8 +72,8 @@ def load_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
 def main():
     # API connection
     # Uncomment next two lines if key is in constants.py
-    # binance_api_key = c.BINANCE_API_KEY
-    # binance_api_secret = c.BINANCE_API_SECRET
+    #  binance_api_key = c.BINANCE_API_KEY
+    #  binance_api_secret = c.BINANCE_API_SECRET
     # Comment next two lines if key is in constants.py
     binance_api_key = os.getenv("BINANCE_API_KEY")
     binance_api_secret = os.getenv("BINANCE_API_SECRET")
