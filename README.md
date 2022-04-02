@@ -40,10 +40,6 @@ Install the requirements:
 ```sh
 $ pip install -r requirements.txt
 ```
-Install the requirements:
-```sh
-$ pip install -r requirements.txt
-```
 If you don't want to use environment variables, you can
 just add your key in constants.py. But you will need to
 comment 2 lines and uncomment 2 other lines in the
