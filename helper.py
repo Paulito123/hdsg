@@ -1,8 +1,6 @@
 import re
 import pandas as pd
-from binance.client import Client
 from datetime import date, datetime, timedelta
-
 
 
 def mmyy_make_iterable_from_to(mmyy_from, mmyy_to=None):
@@ -22,7 +20,7 @@ def mmyy_make_iterable_from_to(mmyy_from, mmyy_to=None):
         return []
 
     dt_from = datetime.strptime(mmyy_from, "%m%y")
-    if not(mmyy_to):
+    if not mmyy_to:
         dt_to = datetime.today()
         dt_to = dt_to + pd.offsets.MonthBegin(-1)
     else:
@@ -70,9 +68,9 @@ def mmyy_to_older_then_from(mmyy_from, mmyy_to):
 
 
 def mmyy_date_slicer(date_str):
-    """Return start and end point for given date in mm-yy format
+    """Return start and end point for given date in mm-yy format.
        :param date_str: date in mmyy format, i.e. "1222" or "0108".
-       :return:
+       :return: start and end date string for a given mmyy formatted date string
     """
     # Initialize output
     start = ""
@@ -147,28 +145,13 @@ def ohlcvn_response_to_csv(response, fqfilename):
     :param fqfilename: The fully qualified filepath and filename of the file in which data needs to be written
     :return: Status message of the operation
     """
+    try:
+        df = pd.DataFrame(data=response,
+                          columns=['ts', 'o', 'h', 'l', 'c', 'v', 'ct', 'qav', 'nt', 'tbb', 'tbq', 'ign'])
+        df = df.drop(['ct', 'qav', 'tbb', 'tbq', 'ign'], axis=1)
+        df.to_csv(fqfilename, encoding='utf-8', index=False, header=False)
+        output = f"SUCCESS! {fqfilename} was created."
+    except:
+        output = "ERROR! An error occurred during the file dump!"
 
-    df = pd.DataFrame(data=response,
-                      columns=['ts', 'o', 'h', 'l', 'c', 'v', 'ct', 'qav', 'nt', 'tbb', 'tbq', 'ign'])
-    df = df.drop(['ct', 'qav', 'tbb', 'tbq', 'ign'], axis=1)
-    df.to_csv(fqfilename, encoding='utf-8', index=False, header=False)
-
-    return 0
-
-
-if __name__ == '__main__':
-    # print(mm_yy_date_slicer("1218"))
-
-    print(Client.KLINE_INTERVAL_1MINUTE)
-
-    # print(mmyy_make_iterable_from_to("0817"))
-
-    # response = [[1640995200000, '0.01106700', '0.01107700', '0.01106200', '0.01107600', '49.83000000', 1640995259999, '0.55154822', 59, '16.86600000', '0.18675310', '0'],
-    #             [1640995260000, '0.01107600', '0.01107800', '0.01107000', '0.01107700', '61.18200000', 1640995319999, '0.67752268', 80, '31.72800000', '0.35134498', '0'],
-    #             [1640995320000, '0.01107800', '0.01107800', '0.01107100', '0.01107300', '59.16000000', 1640995379999, '0.65513704', 47, '20.22300000', '0.22394926', '0']]
-    # fqfilename = '/home/user/Data/bla.txt'
-    # ohlcvn_response_to_csv(response, fqfilename)
-
-# if __name__ == '__main__':
-#     dt = datetime(2016, 1, 31)
-#     print((dt.replace(day=1) + timedelta(days=32)).replace(day=1))
+    return output

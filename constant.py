@@ -17,6 +17,8 @@ BINANCE_SUPPORTED_TFS = [Client.KLINE_INTERVAL_1MINUTE,
                          Client.KLINE_INTERVAL_1MONTH]
 OUTPUT_DIR = "/home/user/Data"
 
+BINANCE_API_KEY = ""
+BINANCE_API_SECRET = ""
 
 
 
