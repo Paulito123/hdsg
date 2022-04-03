@@ -19,12 +19,12 @@ exchanges, currently only Binance.
 
 > A Binance account and API key and secret are required 
 > to get the data. If you don't have an account yet, do 
-> me a favor anc create it with my referral code. 
+> me a favor and create it with my referral code. 
 > Thanks! :)
 > [Create Binance account](https://accounts.binance.me/en/register?ref=11263187)
 
 
-## How to start
+## What to do first
 
 If you are using Linux and you like your keys to
 be defined as environment variables, add your key
@@ -41,6 +41,9 @@ Install the requirements:
 ```sh
 $ pip install -r requirements.txt
 ```
+
+## How to operate
+
 If you don't want to use environment variables, you can
 just add your keys in config.ini. Replace the "not_defined"
 string with your key and secret.
