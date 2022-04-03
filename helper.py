@@ -166,10 +166,19 @@ def ohlcvn_response_to_csv(response, fqfilename):
     :return: Status message of the operation
     """
     try:
+        # Create datafrom from response
         df = pd.DataFrame(data=response,
                           columns=['ts', 'o', 'h', 'l', 'c', 'v', 'ct', 'qav', 'nt', 'tbb', 'tbq', 'ign'])
+
+        # Drop useless columns
         df = df.drop(['ct', 'qav', 'tbb', 'tbq', 'ign'], axis=1)
+
+        # Convert timestamp to datetime
+        df['ts'] = pd.to_datetime(df["ts"], unit='ms')
+
+        # Export to csv
         df.to_csv(fqfilename, encoding='utf-8', index=False, header=True)
+
         output = f"{fqfilename} was created."
     except:
         output = f"ERROR! {fqfilename} could not be created!"
