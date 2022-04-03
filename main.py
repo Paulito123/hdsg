@@ -80,12 +80,11 @@ def dump_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
 
 def main():
     # API connection
-    # Uncomment next two lines if key is in constants.py
-    #  binance_api_key = config['SECRETS']['BINANCE_API_KEY']
-    #  binance_api_secret = config['SECRETS']['BINANCE_API_SECRET']
-    # Comment next two lines if key is in constants.py
     binance_api_key = os.getenv("BINANCE_API_KEY")
     binance_api_secret = os.getenv("BINANCE_API_SECRET")
+    if not binance_api_key or not binance_api_secret:
+        binance_api_key = config['SECRETS']['BINANCE_API_KEY']
+        binance_api_secret = config['SECRETS']['BINANCE_API_SECRET']
 
     binance_client = Client(api_key=binance_api_key, api_secret=binance_api_secret)
 
