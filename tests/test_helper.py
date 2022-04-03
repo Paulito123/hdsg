@@ -34,7 +34,7 @@ iterative_mmyy_list = ['0100', '0200', '0300', '0400', '0500', '0600', '0700', '
                        '0122', '0222', '0322', '0422']
 
 
-def test_mm_yy_date_slicer_start():
+def test_mmyy_date_slicer_start():
     input_list = ["0100", "0610", "1218", f"{mm}{yy}", "100", "1320", "0130", "0000", "0120 "]
     output_list = [("1 Jan, 2000", "1 Feb, 2000"),
                    ("1 Jun, 2010", "1 Jul, 2010"),
@@ -48,9 +48,40 @@ def test_mm_yy_date_slicer_start():
     c = 0
     result_collection = []
     for input in input_list:
-        res_start, res_end = h.mm_yy_date_slicer(input)
+        res_start, res_end = h.mmyy_date_slicer(input)
         result_collection.append((res_start, res_end))
         c = c + 1
 
     assert result_collection == output_list
 
+
+def test_mmyy_make_iterable_from_to():
+    input_list = [("0100", "0200"),
+                  ("1121", "0222"),
+                  # Relative...
+                  ("0422", None),
+                  (f"{mm}{yy}", f"{mm}{yy}"),
+                  ("0322", ""),
+                  # Errors...
+                  ("0000", "0100"),
+                  ("100", None),
+                  ("1120", "0920"),
+                  ("0122 ", "")]
+    result_list = [['0100','0200'],
+                   ['1121','1221','0122','0222'],
+                   # Relative...
+                   ['0422'],
+                   [f"{mm}{yy}"],
+                   ["0322","0422"],
+                   # Errors...
+                   [],
+                   [],
+                   [],
+                   []]
+
+    result_collection = []
+    for input in input_list:
+        result = h.mmyy_make_iterable_from_to(input[0], input[1])
+        result_collection.append(result)
+
+    assert result_collection == result_list

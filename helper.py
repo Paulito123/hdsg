@@ -1,6 +1,12 @@
 import re
 import pandas as pd
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
+import configparser
+
+
+# Read local file `config.ini`.
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 
 def mmyy_make_iterable_from_to(mmyy_from, mmyy_to=None):
@@ -10,25 +16,41 @@ def mmyy_make_iterable_from_to(mmyy_from, mmyy_to=None):
     :param mmyy_to: to value (mmyy)
     :return: Collection of dates
     """
+
     if not(mmyy_valid_date(mmyy_from)):
         return []
+
+    if mmyy_to:
+        if mmyy_to.strip() == "":
+            mmyy_to = None
 
     if mmyy_to and not(mmyy_valid_date(mmyy_to)):
         return []
 
-    if mmyy_to and not(mmyy_to_older_then_from(mmyy_from, mmyy_to)):
+    if mmyy_to and not(mmyy_from == mmyy_to) and not(mmyy_to_older_then_from(mmyy_from, mmyy_to)):
+        return []
+
+    # check if no older date than the current is passed
+    today = date.today()
+    mm = f"{today.month}".zfill(2)
+    yy = f"{today.year}"[2:]
+    yymm_today = int(f"{yy}{mm}")
+    if (mmyy_to and int(f"{mmyy_to[2:]}{mmyy_to[:2]}") > yymm_today) or \
+        (int(f"{mmyy_from[2:]}{mmyy_from[:2]}") > yymm_today):
         return []
 
     dt_from = datetime.strptime(mmyy_from, "%m%y")
     if not mmyy_to:
         dt_to = datetime.today()
         dt_to = dt_to + pd.offsets.MonthBegin(-1)
+        dt_to = dt_to.replace(hour=0, minute=0, second=0, microsecond=0)
     else:
         dt_to = datetime.strptime(mmyy_to, "%m%y")
 
     dt_check = dt_from
     mmyy_coll = [dt_check.strftime('%m%y')]
     while dt_check < dt_to:
+        print(f"dt_check={dt_check},dt_to={dt_to}")
         dt_check = dt_check + pd.DateOffset(months=1)
         mmyy_coll.append(dt_check.strftime('%m%y'))
 
@@ -141,7 +163,6 @@ def ohlcvn_response_to_csv(response, fqfilename):
             "17928899.62484339" // Ignore.
           ]
         ]
-    :param file_dir: Directory in which the csv must be stored
     :param fqfilename: The fully qualified filepath and filename of the file in which data needs to be written
     :return: Status message of the operation
     """
@@ -149,9 +170,13 @@ def ohlcvn_response_to_csv(response, fqfilename):
         df = pd.DataFrame(data=response,
                           columns=['ts', 'o', 'h', 'l', 'c', 'v', 'ct', 'qav', 'nt', 'tbb', 'tbq', 'ign'])
         df = df.drop(['ct', 'qav', 'tbb', 'tbq', 'ign'], axis=1)
-        df.to_csv(fqfilename, encoding='utf-8', index=False, header=False)
-        output = f"SUCCESS! {fqfilename} was created."
+        df.to_csv(fqfilename, encoding='utf-8', index=False, header=True)
+        output = f"{fqfilename} was created."
     except:
-        output = "ERROR! An error occurred during the file dump!"
+        output = f"ERROR! {fqfilename} could not be created!"
 
     return output
+
+
+if __name__ == '__main__':
+    print(mmyy_make_iterable_from_to("0622"))

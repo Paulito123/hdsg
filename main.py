@@ -52,8 +52,6 @@ def load_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
             for mmyy in mmyy_iter:
                 from_dt, to_dt = h.mmyy_date_slicer(mmyy)
 
-                # print("{}".format(mmyy))
-
                 try:
                     if to_dt and not(to_dt == ""):
                         klines = binance_client.get_historical_klines(ticker, interval, from_dt, to_dt)
@@ -90,7 +88,7 @@ def main():
 
     # Parameters
     pairs = [
-        # "ETHUSDT",
+        "ETHUSDT",
         "XRPUSDT"
     ]
     interval = Client.KLINE_INTERVAL_1MINUTE
