@@ -28,10 +28,11 @@ exchanges, currently only Binance.
 
 If you are using Linux and you like your keys to
 be defined as environment variables, add your key
-and secret to env.sh and make it executable. Then
-go to the project directory and execute env.sh
+and secret to env.sh and make this file executable. 
+Do this by opening a linux terminal window and 
+execute the following commands:
 ```sh
-~$ echo "Don't forget to add your key and secret to end.sh"
+~$ echo "Don't forget to add your binance key and secret to end.sh"
 ~$ cd /<path to...>/hdsg
 ../hdsg$ chmod +x env.sh
 ../hdsg$ sh env.sh
@@ -41,30 +42,41 @@ Install the requirements:
 $ pip install -r requirements.txt
 ```
 If you don't want to use environment variables, you can
-just add your key in constants.py. But you will need to
-comment 2 lines and uncomment 2 other lines in the
-main.py file, as indicated in the code.
+just add your keys in config.ini. Replace the "not_defined"
+string with your key and secret.
 ```sh
-## Uncomment next two lines if key is in constants.py
-# binance_api_key = c.BINANCE_API_KEY
-# binance_api_secret = c.BINANCE_API_SECRET
-## Comment next two lines if key is in constants.py
-binance_api_key = os.getenv("BINANCE_API_KEY")
-binance_api_secret = os.getenv("BINANCE_API_SECRET")
+[SECRETS]
+    BINANCE_API_SECRET=not_defined
+    BINANCE_API_KEY=not_defined
 ```
-Update the data directory in the constant.py file.
+Don't forget to update the destination directory in the 
+config.ini file.
 ```
-OUTPUT_DIR = "/home/user/Data"
+[APP]
+    OUTPUT_DIR=/home/user/Data
 ```
-In the main file, you can play with the parameters when
-running main.py.
+Once you are set to go, adjust the run parameters to your
+liking in the **config.ini** file and run the 
+**main.py** file.
 ```
-# Parameters
-pairs = ["ETHUSDT", "XRPUSDT"]
-interval = Client.KLINE_INTERVAL_1MINUTE
-from_mmyy = '0122'
-to_mmyy = None
+[RUN]
+    PAIRS=ETHUSDT,BTCUSDT
+    INTERVAL=1m
+    FROM_MMYY=0122
+    TO_MMYY=
 ```
+Some additional info about what is expected in the 
+config.ini file:
+- **Only change values** in the [RUN] section.
+- PAIRS are separated by a comma and have **no spaces** 
+between, before or after them.
+- All the possible values for intervals can be found in
+the config.ini file in the list named 
+`BINANCE_SUPPORTED_TFS`.
+- **Respect the date format** "mmyy" for the FROM_MMYY 
+and TO_MMYY parameters. When TO_MMYY is left **empty**, 
+TO_MMYY is automatically set to current month meaning 
+all data is fetched from the FROM_MMYY until today.
 
 ## License
 
