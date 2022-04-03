@@ -9,7 +9,7 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 
-def load_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None):
+def dump_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None):
     """
     Load a defined part of historic data for a given start date and a given list of tickers.
     If a to date is specified, data is loaded for all months between the given dates.
@@ -44,11 +44,14 @@ def load_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
         return mess
 
     supported_timeframes = config["APP"]["BINANCE_SUPPORTED_TFS"].split(',')
+    mmyy_iter = h.mmyy_make_iterable_from_to(mmyy_from, mmyy_to)
+    nr_of_tickers = ticker_list.count()
+    nr_of_periods = mmyy_iter.count()
+    expected_nr_of_files = nr_of_tickers * nr_of_periods
+    print(f"{expected_nr_of_files} files are expected to be dumped.")
     if interval in supported_timeframes:
         file_counter = 0
         for ticker in ticker_list:
-            mmyy_iter = h.mmyy_make_iterable_from_to(mmyy_from, mmyy_to)
-
             for mmyy in mmyy_iter:
                 from_dt, to_dt = h.mmyy_date_slicer(mmyy)
 
@@ -65,7 +68,7 @@ def load_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
                 res = h.ohlcvn_response_to_csv(klines, fqfilename)
                 print(res)
 
-                if res[0:7] == "SUCCESS":
+                if res[:5] != "ERROR":
                     file_counter = file_counter + 1
 
         print(f"{file_counter} files have been created!")
@@ -83,19 +86,17 @@ def main():
     # Comment next two lines if key is in constants.py
     binance_api_key = os.getenv("BINANCE_API_KEY")
     binance_api_secret = os.getenv("BINANCE_API_SECRET")
-    # Create Binance client object
+
     binance_client = Client(api_key=binance_api_key, api_secret=binance_api_secret)
 
     # Parameters
-    pairs = [
-        "ETHUSDT",
-        "XRPUSDT"
-    ]
-    interval = Client.KLINE_INTERVAL_1MINUTE
-    from_mmyy = '0422'
-    to_mmyy = None
+    pairs = config["RUN"]["PAIRS"].split(',')
+    interval = config["RUN"]["INTERVAL"]
+    from_mmyy = config["RUN"]["FROM_MMYY"]
+    to_mmyy = config["RUN"]["TO_MMYY"] if config["RUN"]["TO_MMYY"] else None
 
-    load_history(binance_client, interval, pairs, from_mmyy, to_mmyy)
+    # Execute data fetch'n dump
+    dump_history(binance_client, interval, pairs, from_mmyy, to_mmyy)
 
 
 if __name__ == '__main__':

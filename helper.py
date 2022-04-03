@@ -50,7 +50,6 @@ def mmyy_make_iterable_from_to(mmyy_from, mmyy_to=None):
     dt_check = dt_from
     mmyy_coll = [dt_check.strftime('%m%y')]
     while dt_check < dt_to:
-        print(f"dt_check={dt_check},dt_to={dt_to}")
         dt_check = dt_check + pd.DateOffset(months=1)
         mmyy_coll.append(dt_check.strftime('%m%y'))
 
@@ -176,7 +175,3 @@ def ohlcvn_response_to_csv(response, fqfilename):
         output = f"ERROR! {fqfilename} could not be created!"
 
     return output
-
-
-if __name__ == '__main__':
-    print(mmyy_make_iterable_from_to("0622"))
