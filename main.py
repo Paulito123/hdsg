@@ -1,7 +1,12 @@
 import os
-import constant as c
 import helper as h
 from binance.client import Client
+import configparser
+
+
+# Read local file `config.ini`.
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 
 def load_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None):
@@ -38,7 +43,8 @@ def load_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
         print(mess)
         return mess
 
-    if interval in c.BINANCE_SUPPORTED_TFS:
+    supported_timeframes = config["APP"]["BINANCE_SUPPORTED_TFS"].split(',')
+    if interval in supported_timeframes:
         file_counter = 0
         for ticker in ticker_list:
             mmyy_iter = h.mmyy_make_iterable_from_to(mmyy_from, mmyy_to)
@@ -46,16 +52,18 @@ def load_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
             for mmyy in mmyy_iter:
                 from_dt, to_dt = h.mmyy_date_slicer(mmyy)
 
+                # print("{}".format(mmyy))
+
                 try:
                     if to_dt and not(to_dt == ""):
                         klines = binance_client.get_historical_klines(ticker, interval, from_dt, to_dt)
                     else:
                         klines = binance_client.get_historical_klines(ticker, interval, from_dt)
-                except:
+                except Exception as e:
                     print("ERROR: Issue when fetching data from Binance")
                     continue
 
-                fqfilename = f"{c.OUTPUT_DIR}/{h.create_filename(ticker, interval, mmyy)}"
+                fqfilename = f"{config['APP']['OUTPUT_DIR']}/{h.create_filename(ticker, interval, mmyy)}"
                 res = h.ohlcvn_response_to_csv(klines, fqfilename)
                 print(res)
 
@@ -72,8 +80,8 @@ def load_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
 def main():
     # API connection
     # Uncomment next two lines if key is in constants.py
-    #  binance_api_key = c.BINANCE_API_KEY
-    #  binance_api_secret = c.BINANCE_API_SECRET
+    #  binance_api_key = config['SECRETS']['BINANCE_API_KEY']
+    #  binance_api_secret = config['SECRETS']['BINANCE_API_SECRET']
     # Comment next two lines if key is in constants.py
     binance_api_key = os.getenv("BINANCE_API_KEY")
     binance_api_secret = os.getenv("BINANCE_API_SECRET")
@@ -82,11 +90,11 @@ def main():
 
     # Parameters
     pairs = [
-        "ETHUSDT",
+        # "ETHUSDT",
         "XRPUSDT"
     ]
     interval = Client.KLINE_INTERVAL_1MINUTE
-    from_mmyy = '0122'
+    from_mmyy = '0422'
     to_mmyy = None
 
     load_history(binance_client, interval, pairs, from_mmyy, to_mmyy)
@@ -96,6 +104,5 @@ if __name__ == '__main__':
     main()
 
 
-# TODO: Use a config file instead of constant.py
 # TODO: make a testcase for all functions in helper file
 # TODO: use a class instead of plain script
