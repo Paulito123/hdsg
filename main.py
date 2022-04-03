@@ -22,6 +22,8 @@ def dump_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
     :return: 1 (success) or 0 (error)
     """
 
+    print("---Here we go!---")
+
     # Check input
     if not binance_client:
         mess = "ERROR: binance client not set"
@@ -45,10 +47,12 @@ def dump_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
 
     supported_timeframes = config["APP"]["BINANCE_SUPPORTED_TFS"].split(',')
     mmyy_iter = h.mmyy_make_iterable_from_to(mmyy_from, mmyy_to)
-    nr_of_tickers = ticker_list.count()
-    nr_of_periods = mmyy_iter.count()
+
+    nr_of_tickers = len(ticker_list)
+    nr_of_periods = len(mmyy_iter)
     expected_nr_of_files = nr_of_tickers * nr_of_periods
     print(f"{expected_nr_of_files} files are expected to be dumped.")
+
     if interval in supported_timeframes:
         file_counter = 0
         for ticker in ticker_list:
@@ -72,9 +76,11 @@ def dump_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
                     file_counter = file_counter + 1
 
         print(f"{file_counter} files have been created!")
+        print("---...and we're done!---")
         return 1
     else:
         print("Something went wrong. Call 911!")
+        print("---...and we're done!---")
         return 0
 
 
