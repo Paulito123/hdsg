@@ -79,7 +79,7 @@ def dump_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
         print("---...and we're done!---")
         return 1
     else:
-        print("Something went wrong. Call 911!")
+        print("Configured interval is not in the BINANCE_SUPPORTED_TFS list.")
         print("---...and we're done!---")
         return 0
 
