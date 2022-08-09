@@ -1,12 +1,13 @@
+#!/usr/bin/env python3
+
 import os
 import helper as h
+from config import Config
 from binance.client import Client
-import configparser
+from dotenv import load_dotenv
 
-
-# Read local file `config.ini`.
-config = configparser.ConfigParser()
-config.read('config.ini')
+# load .env.secret.dev
+load_dotenv(f"{os.getcwd()}/.env.secret.prod")
 
 
 def dump_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None):
@@ -45,7 +46,7 @@ def dump_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
         print(mess)
         return mess
 
-    supported_timeframes = config["APP"]["BINANCE_SUPPORTED_TFS"].split(',')
+    supported_timeframes = Config["BINANCE_SUPPORTED_TFS"].split(',')
     mmyy_iter = h.mmyy_make_iterable_from_to(mmyy_from, mmyy_to)
 
     nr_of_tickers = len(ticker_list)
@@ -68,7 +69,7 @@ def dump_history(binance_client, interval, ticker_list, mmyy_from, mmyy_to=None)
                     print("ERROR: Issue when fetching data from Binance")
                     continue
 
-                fqfilename = f"{config['APP']['OUTPUT_DIR']}/{h.create_filename(ticker, interval, mmyy)}"
+                fqfilename = f"{Config['OUTPUT_DIR']}/{h.create_filename(ticker, interval, mmyy)}"
                 res = h.ohlcvn_response_to_csv(klines, fqfilename)
                 print(res)
 
@@ -89,16 +90,16 @@ def main():
     binance_api_key = os.getenv("BINANCE_API_KEY")
     binance_api_secret = os.getenv("BINANCE_API_SECRET")
     if not binance_api_key or not binance_api_secret:
-        binance_api_key = config['SECRETS']['BINANCE_API_KEY']
-        binance_api_secret = config['SECRETS']['BINANCE_API_SECRET']
+        binance_api_key = Config['BINANCE_API_KEY']
+        binance_api_secret = Config['BINANCE_API_SECRET']
 
     binance_client = Client(api_key=binance_api_key, api_secret=binance_api_secret)
 
     # Parameters
-    pairs = config["RUN"]["PAIRS"].split(',')
-    interval = config["RUN"]["INTERVAL"]
-    from_mmyy = config["RUN"]["FROM_MMYY"]
-    to_mmyy = config["RUN"]["TO_MMYY"] if config["RUN"]["TO_MMYY"] else None
+    pairs = Config["PAIRS"].split(',')
+    interval = Config["INTERVAL"]
+    from_mmyy = Config["FROM_MMYY"]
+    to_mmyy = Config["TO_MMYY"] if Config["TO_MMYY"] else None
 
     # Execute data fetch'n dump
     dump_history(binance_client, interval, pairs, from_mmyy, to_mmyy)
@@ -106,7 +107,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-# TODO: make a testcase for all functions in helper file
-# TODO: use a class instead of plain script

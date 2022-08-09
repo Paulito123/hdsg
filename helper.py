@@ -1,12 +1,6 @@
 import re
 import pandas as pd
 from datetime import date, datetime
-import configparser
-
-
-# Read local file `config.ini`.
-config = configparser.ConfigParser()
-config.read('config.ini')
 
 
 def mmyy_make_iterable_from_to(mmyy_from, mmyy_to=None):

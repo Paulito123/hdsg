@@ -2,3 +2,4 @@ binance==0.3
 pandas==1.4.1
 pytest==7.1.1
 python_binance==1.0.15
+python-dotenv==0.20.0

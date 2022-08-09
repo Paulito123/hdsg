@@ -86,3 +86,6 @@ all data is fetched from the FROM_MMYY until today.
 MIT
 
 **Free Software, Hell Yeah!**
+
+# TODO: make a testcase for all functions in helper file
+# TODO: use a class instead of plain script
