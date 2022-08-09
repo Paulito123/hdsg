@@ -26,16 +26,11 @@ exchanges, currently only Binance.
 
 ## What to do first
 
-If you are using Linux and you like your keys to
-be defined as environment variables, add your key
-and secret to env.sh and make this file executable. 
-Do this by opening a linux terminal window and 
-execute the following commands:
-```sh
-~$ echo "Don't forget to add your binance key and secret to end.sh"
-~$ cd /<path to...>/hdsg
-../hdsg$ chmod +x env.sh
-../hdsg$ sh env.sh
+Copy .env.secret.dev and name it .env.secret.prod and
+add your key and secret. 
+```python
+BINANCE_API_KEY=your-api-key-goes-here
+BINANCE_API_SECRET=your-secret-goes-here
 ```
 Install the requirements:
 ```sh
@@ -45,21 +40,21 @@ $ pip install -r requirements.txt
 ## How to operate
 
 If you don't want to use environment variables, you can
-just add your keys in config.ini. Replace the "not_defined"
+just add your keys in config.py. Replace the "not_defined"
 string with your key and secret.
 ```sh
 [SECRETS]
-    BINANCE_API_SECRET=not_defined
-    BINANCE_API_KEY=not_defined
+    BINANCE_API_SECRET="not_defined"
+    BINANCE_API_KEY="not_defined"
 ```
 Don't forget to update the destination directory in the 
-config.ini file.
+config.py file.
 ```
 [APP]
     OUTPUT_DIR=/home/user/Data
 ```
 Once you are set to go, adjust the run parameters to your
-liking in the **config.ini** file and run the 
+liking in the **config.py** file and run the 
 **main.py** file.
 ```
 [RUN]
@@ -69,12 +64,12 @@ liking in the **config.ini** file and run the
     TO_MMYY=
 ```
 Some additional info about what is expected in the 
-config.ini file:
-- **Only change values** in the [RUN] section.
+config.py file:
+- **Don't change the value** of BINANCE_SUPPORTED_TFS.
 - PAIRS are separated by a comma and have **no spaces** 
 between, before or after them.
 - All the possible values for intervals can be found in
-the config.ini file in the list named 
+the config.py file in the list named 
 `BINANCE_SUPPORTED_TFS`.
 - **Respect the date format** "mmyy" for the FROM_MMYY 
 and TO_MMYY parameters. When TO_MMYY is left **empty**, 
