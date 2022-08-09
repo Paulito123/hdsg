@@ -42,26 +42,23 @@ $ pip install -r requirements.txt
 If you don't want to use environment variables, you can
 just add your keys in config.py. Replace the "not_defined"
 string with your key and secret.
-```sh
-[SECRETS]
-    BINANCE_API_SECRET="not_defined"
-    BINANCE_API_KEY="not_defined"
+```python
+BINANCE_API_SECRET="not_defined"
+BINANCE_API_KEY="not_defined"
 ```
 Don't forget to update the destination directory in the 
 config.py file.
-```
-[APP]
-    OUTPUT_DIR=/home/user/Data
+```python
+OUTPUT_DIR="/home/user/Data"
 ```
 Once you are set to go, adjust the run parameters to your
 liking in the **config.py** file and run the 
 **main.py** file.
-```
-[RUN]
-    PAIRS=ETHUSDT,BTCUSDT
-    INTERVAL=1m
-    FROM_MMYY=0122
-    TO_MMYY=
+```python
+PAIRS="ETHUSDT,BTCUSDT"
+INTERVAL="1m"
+FROM_MMYY="0122"
+TO_MMYY=""
 ```
 Some additional info about what is expected in the 
 config.py file:
