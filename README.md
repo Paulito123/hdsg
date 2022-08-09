@@ -79,6 +79,6 @@ MIT
 
 **Free Software, Hell Yeah!**
 
-###TODO:
+## TODO
 - make a testcase for all functions in helper file
 - use a class instead of plain script
