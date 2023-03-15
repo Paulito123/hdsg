@@ -3,7 +3,7 @@
 
 Historic Data Set Gatherer (HDSG) aims to do what the 
 name implies, to gather historic OHCL data from 
-exchanges, currently only Binance. 
+Binance and Kucoin. 
 
 - Configure the timeframe, download location and list of tickers
 - Run the program
@@ -25,7 +25,6 @@ exchanges, currently only Binance.
 
 
 ## What to do first
-
 Copy .env.secret.dev and name it .env.secret.prod and
 add your key and secret. 
 ```python
@@ -80,5 +79,9 @@ MIT
 **Free Software, Hell Yeah!**
 
 ## TODO
-- make a testcase for all functions in helper file
-- use a class instead of plain script
+- Get minute candles from Binance and Kucoin for several pairs that trade on both exchanges
+
+
+# Data analysis
+## TODO:
+- Find out the correlation between trading pairs that exists on Binance and Kucoin, e.g. USDTAGIX, USDTBTC.
